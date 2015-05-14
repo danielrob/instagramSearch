@@ -1,0 +1,54 @@
+body {
+  font-family: 'moneymoney';
+  text-align: center;
+}
+
+.b {
+  background-color: #517FA4;
+  width: 100%;
+  font-size: 6em;
+  line-height: 175px;
+  height: 200px;
+}
+
+#search {
+  margin: -28px 0 0 0;
+  color: #514f4A;
+  input {
+    background-color: white;
+    border-color: white;
+    font-size: 2em;
+    text-align: center;
+  }
+  button {
+    font-size: 1.6em;
+  }
+}
+
+.b2 {
+  margin: -17px 0 0 0;
+  line-height: 195px;
+  height: 205px;
+  span:first-child {
+    background-color: white;
+    padding: 0 9px;
+  }
+}
+
+#notices {
+  margin-top: -50px;
+  font-size: 1.6em;
+  color: #ffcc33;
+  min-height: 60px;
+}
+
+@media screen and (max-width: 1270px){
+  .subtext {
+    display: none;
+  }
+}
+
+@font-face {
+  font-family: 'moneymoney';
+  src: url(../fonts/moneymoney.ttf);
+}
