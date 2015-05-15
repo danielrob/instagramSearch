@@ -1,6 +1,7 @@
 var app = angular.module('instagramSearcher', []);
 
 app.controller('appController', function ($scope, $http) {
+
   $scope.search = function(query){
     $scope.resultMsg = undefined;
     $scope.query = undefined;
@@ -51,10 +52,11 @@ app.controller('appController', function ($scope, $http) {
 
   function mapResponse(result){
     return result.data.map(function(img){
+      var caption = img.caption == null ? 'captionless' : teaser(img.caption.text);
       return {
         'embed_url': img.images.low_resolution.url,
         'link': img.link,
-        'caption': teaser(img.caption.text)
+        'caption': caption
       };
     });
   };
@@ -64,5 +66,4 @@ app.controller('appController', function ($scope, $http) {
       txt :
       txt.substring(0, 45).replace(/\s+\S*$/, "...");
   };
-
 });
