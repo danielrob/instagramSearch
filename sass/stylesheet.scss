@@ -42,6 +42,17 @@ body {
   min-height: 60px;
 }
 
+.img {
+  margin: 1em 1em 0 1em;
+  display: inline-block;
+  p {
+    font-family: helvetica;
+    font-style: italic;
+    font-size: 1em;
+    color: #aaa;
+  }
+}
+
 @media screen and (max-width: 1270px){
   .subtext {
     display: none;

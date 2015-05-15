@@ -24,10 +24,23 @@
     <p><span>Searcher.</span> <span class="subtext"><small>Like, just search for it!</small></span></p>
   </div>
   <div id="notices" class="container-fluid">
-    <div ng-if="searching"><p>Yo' {{query_processing}} is comin'</p> </div>
+    <div class="flash" ng-if="searching">
+      <p>Yo' {{query_processing}} is comin'</p>
+    </div>
+    <div class="flash" ng-if="resultMsg">
+      <p>{{resultMsg}}</p>
+    </div>
   </div>
-  <div class="container-fluid">
-    <p>Results</p>
+  <div class="results">
+    <div ng-repeat="img in images" class="img">
+        <p>
+          <a href="{{img.link}}">
+            <img ng-src="{{img.embed_url}}"/>
+          </a>
+        </p>
+        <p ng-bind="img.caption">
+        </p>
+    </div>
   </div>
 </body>
 </html>
