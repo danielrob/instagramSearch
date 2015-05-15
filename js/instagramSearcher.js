@@ -27,6 +27,11 @@ app.controller('appController', function ($scope, $http) {
     })
     .success(function(result) {
       setSearching(false);
+      console.log(result)
+      if (result.meta.code != 200) {
+        $scope.resultMsg = "HAHA! You searched " + query + ".";
+        return;
+      }
       $scope.resultMsg = setSuccessMsg(result);
       $scope.images = mapResponse(result);
     })
