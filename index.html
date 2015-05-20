@@ -25,11 +25,8 @@
     <p><span>Searcher.</span> <span class="subtext"><small>Like, just search for it!</small></span></p>
   </div>
   <div id="notices" class="container-fluid">
-    <div class="flash" ng-if="query_processing">
-      <p>Yo' {{query_processing}} is comin'</p>
-    </div>
-    <div class="flash" ng-if="resultMsg">
-      <p>{{resultMsg}}</p>
+    <div class="flash" ng-if="msg">
+      <p>{{msg}}</p>
     </div>
   </div>
   <div class="results">

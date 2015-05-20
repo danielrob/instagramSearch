@@ -5,8 +5,9 @@ app.controller('appController', function ($scope, $http) {
   $scope.search = function(query){
     if (!$scope.query) return // do nothing on empty queries
     resetSearch();
-    setSearching(query);
-    search(sanitizeQuery(query));
+    query = sanitizeQuery(query)
+    setMsg("Yo' " + query + " is comin");
+    search(query);
   };
 
   function search(query){
@@ -23,47 +24,49 @@ app.controller('appController', function ($scope, $http) {
       params: _request
     })
     .success(function(result) {
-      setSearching(false);
       console.log(result)
       if (result.meta.code != 200) {
-        $scope.resultMsg = "HAHA! You searched " + query + ".";
+        setMsg("HAHA! You searched " + query + ".")
         return;
       }
-      $scope.resultMsg = setSuccessMsg(result);
-      $scope.images = mapResponse(result);
+      setCount(result)
+      setSuccessMsg();
+      animate();
+      setImages(result);
     })
     .error(function() {
       setSearching(false);
-      $scope.resultMsg = "something's wrong man... really wrong."
+      setMsg("something's wrong man... really wrong.");
     });
   };
 
   function resetSearch(){
     $scope.shake = undefined;
-    $scope.resultMsg = undefined;
     $scope.query = undefined;
     $scope.instasearch.$setPristine();
     $scope.instasearch.$setUntouched();
-  };
-
-  function setSearching(stringOrFalse){
-    $scope.query_processing = stringOrFalse ;
   };
 
   function sanitizeQuery(query){
     return query.replace(/\s(.*)/, "");
   };
 
-  function setSuccessMsg(result){
-    var count = result.data.length;
-    $scope.shake = (0 < count && count != 20) ? 'shake': '';
-    return count == 0 ?
-      'Got nothin man. Try some real words!' :
-      'Got ' + result.data.length + ' results... coool';
+  function setMsg(message){
+    $scope.msg = message;
   };
 
-  function mapResponse(result){
-    return result.data.map(function(img){
+  function setSuccessMsg(){
+    $scope.count == 0 ?
+      setMsg('Got nothin man. Try some real words!') :
+      setMsg('Got ' + $scope.count + ' results... coool');
+  };
+
+  function setCount(result){
+    $scope.count = result.data.length;
+  }
+
+  function setImages(result){
+    var images = result.data.map(function(img){
       var caption = img.caption == null ? 'captionless' : teaser(img.caption.text);
       return {
         'embed_url': img.images.low_resolution.url,
@@ -71,6 +74,7 @@ app.controller('appController', function ($scope, $http) {
         'caption': caption
       };
     });
+    $scope.images = images;
   };
 
   function teaser(txt){
@@ -78,4 +82,9 @@ app.controller('appController', function ($scope, $http) {
       txt :
       txt.substring(0, 45).replace(/\s+\S*$/, "...");
   };
+
+  function animate(){
+    count = $scope.count;
+    $scope.shake = (0 < count && count != 20) ? 'shake': '';
+  }
 });
