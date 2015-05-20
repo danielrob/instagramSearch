@@ -48,7 +48,7 @@ app.controller('appController', function ($scope, $http) {
   };
 
   function sanitizeQuery(query){
-    return query.replace(/\s(.*)/, "");
+    return query.replace(/[^a-zA-Z0-9]/g, '');
   };
 
   function setMsg(message){
