@@ -4,13 +4,8 @@ app.controller('appController', function ($scope, $http) {
 
   $scope.search = function(query){
     if (!$scope.query) return // do nothing on empty queries
-    $scope.shake = undefined;
-    $scope.resultMsg = undefined;
-    $scope.query = undefined;
-    $scope.instasearch.$setPristine();
-    $scope.instasearch.$setUntouched();
-    $scope.query_processing = query;
-    setSearching(true);
+    resetSearch();
+    setSearching(query);
     search(sanitizeQuery(query));
   };
 
@@ -43,13 +38,21 @@ app.controller('appController', function ($scope, $http) {
     });
   };
 
-  function setSearching(boolean){
-    $scope.searching = boolean;
-  }
+  function resetSearch(){
+    $scope.shake = undefined;
+    $scope.resultMsg = undefined;
+    $scope.query = undefined;
+    $scope.instasearch.$setPristine();
+    $scope.instasearch.$setUntouched();
+  };
+
+  function setSearching(stringOrFalse){
+    $scope.query_processing = stringOrFalse ;
+  };
 
   function sanitizeQuery(query){
     return query.replace(/\s(.*)/, "");
-  }
+  };
 
   function setSuccessMsg(result){
     var count = result.data.length;
