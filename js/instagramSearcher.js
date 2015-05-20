@@ -1,8 +1,9 @@
-var app = angular.module('instagramSearcher', []);
+var app = angular.module('instagramSearcher', ['ngAnimate']);
 
 app.controller('appController', function ($scope, $http) {
 
   $scope.search = function(query){
+    $scope.shake = undefined;
     $scope.resultMsg = undefined;
     $scope.query = undefined;
     $scope.instasearch.$setPristine();
@@ -50,7 +51,9 @@ app.controller('appController', function ($scope, $http) {
   }
 
   function setSuccessMsg(result){
-    return result.data.length == 0 ?
+    var count = result.data.length;
+    $scope.shake = (0 < count && count != 20) ? 'shake': '';
+    return count == 0 ?
       'Got nothin man. Try some real words!' :
       'Got ' + result.data.length + ' results... coool';
   };
