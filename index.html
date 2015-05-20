@@ -14,8 +14,8 @@
     <p ng-class="shake">Instagram</p>
   </div>
   <div id="search">
-    <form name="instasearch" ng-submit="search(query)">
-      <input ng-model="query" placeholder="Search here!" type="text" size="15" required>
+    <form name="instasearch" ng-submit="search(query)" novalidate>
+      <input ng-model="query" placeholder="Search here!" type="text" size="15">
       <button type="submit" class="btn btn-primary">
         <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
       </button>

@@ -3,6 +3,7 @@ var app = angular.module('instagramSearcher', ['ngAnimate']);
 app.controller('appController', function ($scope, $http) {
 
   $scope.search = function(query){
+    if (!$scope.query) return // do nothing on empty queries
     $scope.shake = undefined;
     $scope.resultMsg = undefined;
     $scope.query = undefined;
