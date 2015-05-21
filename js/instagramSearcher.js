@@ -97,7 +97,7 @@ app.controller('appController', function ($scope, $http) {
      ? 'shake': '';
   }
 
-  // Gaming
+  // Gaming //TODO: move to seperate controller. 
   // Initialisation
   $scope.mode = 'Searcher.'
   var searchCount = 0;
@@ -123,7 +123,7 @@ app.controller('appController', function ($scope, $http) {
     searchCount += 1;
     // Limit game to 20 plays for beginners luck, 10 thereafter.
     if (searchCount >19) {
-      $scope.count = 0; // hack
+      $scope.count = 0; // hack //TODO: Remove hack. 
       searchCount = 9;
     }
     // Go no further if it's game over or a repeat search.
@@ -139,6 +139,9 @@ app.controller('appController', function ($scope, $http) {
     if (count == 0) {
       updateGameMode(true);
       zeroGame();
+      // For a friend
+      if ($scope.lastSearch == "Capitaineisthegreatest") 
+        setMsg('Capitaine IS The Greatest');
       return true;
     } else {
       return false;
