@@ -61,6 +61,12 @@ body {
       text-align: center;
       font-size: 16px; }
 
+#topscore {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 3px; }
+
 @keyframes spaceboots {
   0% {
     transform: translate(2px, 1px) rotate(0deg); }

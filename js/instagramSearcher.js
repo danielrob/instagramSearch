@@ -44,7 +44,7 @@ app.controller('appController', function ($scope, $http) {
   function resetSearch(){
     $scope.shake = undefined;
     $scope.query = undefined;
-    $scope.captionless = false;
+    $scope.captionless = 0;
     $scope.count = undefined;
     $scope.instasearch.$setPristine();
     $scope.instasearch.$setUntouched();
@@ -81,7 +81,7 @@ app.controller('appController', function ($scope, $http) {
   };
 
   function noCaption(){
-    $scope.captionless = true;
+    $scope.captionless += 1;
     return 'captionless!'
   }
 
@@ -93,17 +93,20 @@ app.controller('appController', function ($scope, $http) {
 
   function animate(){
     var count = $scope.count;
-    $scope.shake = (0 < count && count != 20) ? 'shake': '';
+    $scope.shake = ((0 < count && count != 20) || $scope.captionless)
+     ? 'shake': '';
   }
 
   // Gaming
   // Initialisation
   $scope.mode = 'Searcher.'
   var searchCount = 0;
+  $scope.topScore = 0;
   var searches; zeroGame();
 
   // Initial setup & after every loss
   function zeroGame(){
+    updateTopScore();
     $scope.gameScore = {
       'instawhacks':0,
       'belowTwenty':0,
@@ -118,6 +121,11 @@ app.controller('appController', function ($scope, $http) {
   function playGame(){
     // Update search count regardless.
     searchCount += 1;
+    // Limit game to 20 plays for beginners luck, 10 thereafter.
+    if (searchCount >19) {
+      $scope.count = 0; // hack
+      searchCount = 9;
+    }
     // Go no further if it's game over or a repeat search.
     if (gameOver($scope.count) || existingSearch($scope.lastSearch)) return;
     animate();
@@ -160,7 +168,7 @@ app.controller('appController', function ($scope, $http) {
     if (1 < count && count < 20) gameScore.belowTwenty += 100;
     if (count == 20) gameScore.gotTwenty +=10;
     if (count > 20) gameScore.maxbreach += 10000;
-    if (captionless) gameScore.captionless += 1000;
+    if (captionless) gameScore.captionless += (1000 * captionless);
     gameScore.total = getTotalScore(gameScore);
     $scope.gameScore = gameScore;
   };
@@ -174,5 +182,11 @@ app.controller('appController', function ($scope, $http) {
       }
     }
     return total;
+  };
+
+  function updateTopScore(){
+    if ($scope.gameScore && ($scope.topScore < $scope.gameScore.total)) {
+      $scope.topScore = $scope.gameScore.total;
+    };
   };
 });

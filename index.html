@@ -37,29 +37,32 @@
       </tr>
       <tr ng-if="gameScore.gotTwenty">
         <td>Got Twenty...</td>
-        <td>{{gameScore.gotTwenty}} pts  </td>
+        <td>{{gameScore.gotTwenty | number}} pts  </td>
       </tr>
       <tr ng-if="gameScore.belowTwenty">
         <td ng-class="shake">Below Twenty</td>
-        <td>{{gameScore.belowTwenty}} pts  </td>
+        <td>{{gameScore.belowTwenty | number}} pts  </td>
       </tr>
       <tr ng-if="gameScore.instawhacks">
         <td ng-class="shake">InstaWhack!</td>
-        <td>{{gameScore.instawhacks}} pts  </td>
+        <td>{{gameScore.instawhacks | number}} pts  </td>
       </tr>
       <tr ng-if="gameScore.maxbreach">
         <td ng-class="shake">Max Breach!</td>
-        <td>{{gameScore.maxbreach}} pts  </td>
+        <td>{{gameScore.maxbreach | number}} pts  </td>
       </tr>
       <tr ng-if="gameScore.captionless">
         <td ng-class="shake">Captionless Result!</td>
-        <td>{{gameScore.captionless}} pts  </td>
+        <td>{{gameScore.captionless | number}} pts  </td>
       </tr>
       <tr>
         <th>Total:</th>
-        <th>{{gameScore.total}}!</th>
+        <th>{{gameScore.total | number}}!</th>
       </tr>
     </table>
+  </div>
+  <div id="topscore" ng-if="(mode != 'Searcher.') && (mode != 'Search onn....') && topScore">
+    <p>TOP SCORE! {{topScore | number}}</p>
   </div>
   <div class="results">
     <div ng-repeat="img in images" class="img">
