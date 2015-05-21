@@ -2,10 +2,12 @@ var app = angular.module('instagramSearcher', ['ngAnimate']);
 
 app.controller('appController', function ($scope, $http) {
 
+  // Searching
   $scope.search = function(query){
-    if (!$scope.query) return // do nothing on empty queries
-    resetSearch();
     query = sanitizeQuery(query)
+    if (!query) return
+    $scope.lastSearch = query;
+    resetSearch();
     setMsg("Yo' " + query + " is comin");
     search(query);
   };
@@ -31,11 +33,10 @@ app.controller('appController', function ($scope, $http) {
       }
       setCount(result)
       setSuccessMsg();
-      animate();
       setImages(result);
+      playGame();
     })
     .error(function() {
-      setSearching(false);
       setMsg("something's wrong man... really wrong.");
     });
   };
@@ -43,6 +44,8 @@ app.controller('appController', function ($scope, $http) {
   function resetSearch(){
     $scope.shake = undefined;
     $scope.query = undefined;
+    $scope.captionless = false;
+    $scope.count = undefined;
     $scope.instasearch.$setPristine();
     $scope.instasearch.$setUntouched();
   };
@@ -67,7 +70,7 @@ app.controller('appController', function ($scope, $http) {
 
   function setImages(result){
     var images = result.data.map(function(img){
-      var caption = img.caption == null ? 'captionless' : teaser(img.caption.text);
+      var caption = img.caption == null ? noCaption() : teaser(img.caption.text);
       return {
         'embed_url': img.images.low_resolution.url,
         'link': img.link,
@@ -77,6 +80,11 @@ app.controller('appController', function ($scope, $http) {
     $scope.images = images;
   };
 
+  function noCaption(){
+    $scope.captionless = true;
+    return 'captionless!'
+  }
+
   function teaser(txt){
     return txt.length < 46 ?
       txt :
@@ -84,7 +92,87 @@ app.controller('appController', function ($scope, $http) {
   };
 
   function animate(){
-    count = $scope.count;
+    var count = $scope.count;
     $scope.shake = (0 < count && count != 20) ? 'shake': '';
   }
+
+  // Gaming
+  // Initialisation
+  $scope.mode = 'Searcher.'
+  var searchCount = 0;
+  var searches; zeroGame();
+
+  // Initial setup & after every loss
+  function zeroGame(){
+    $scope.gameScore = {
+      'instawhacks':0,
+      'belowTwenty':0,
+      'gotTwenty':0,
+      'maxbreach':0,
+      'captionless':0
+    };
+    searches = [];
+  };
+
+  // 'Public Function' relies on: $scope.count, $scope.captionless, $scope.lastSearch from Search scope.
+  function playGame(){
+    // Update search count regardless.
+    searchCount += 1;
+    // Go no further if it's game over or a repeat search.
+    if (gameOver($scope.count) || existingSearch($scope.lastSearch)) return;
+    animate();
+    // Change front page text over time based on search count.
+    updateGameMode();
+    // Update scoring based on the search results from this round.
+    updateScoring($scope.count, $scope.captionless, $scope.gameScore);
+  }
+
+  function gameOver(count){
+    if (count == 0) {
+      updateGameMode(true);
+      zeroGame();
+      return true;
+    } else {
+      return false;
+    };
+  };
+
+  function existingSearch(last){
+    if (searches.indexOf(last) == -1) {
+       searches.push(last);
+       return false;
+    } else {
+      if (searchCount >= 5) setMsg('Not again. Repeat search yo!');
+      return true;
+    };
+  };
+
+  // Change front page text over time.
+  function updateGameMode(lost){
+    if (searchCount > 2) $scope.mode = 'Search onn....'
+    if (searchCount > 4) $scope.mode = 'Searchgamer.'
+    if (searchCount > 10) $scope.mode = 'Gamer.'
+    if (searchCount > 4 && lost) $scope.mode = 'Loser. Play Again!'
+  };
+
+  function updateScoring(count, captionless, gameScore){
+    if (count == 1) gameScore.instawhacks += 500;
+    if (1 < count && count < 20) gameScore.belowTwenty += 100;
+    if (count == 20) gameScore.gotTwenty +=10;
+    if (count > 20) gameScore.maxbreach += 10000;
+    if (captionless) gameScore.captionless += 1000;
+    gameScore.total = getTotalScore(gameScore);
+    $scope.gameScore = gameScore;
+  };
+
+  function getTotalScore(gameScore){
+    delete gameScore.total;
+    var total = 0;
+    for (var property in gameScore) {
+      if (gameScore.hasOwnProperty(property)) {
+        total += gameScore[property];
+      }
+    }
+    return total;
+  };
 });

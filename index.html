@@ -22,12 +22,44 @@
     </form>
   </div>
   <div class="b b2 container-fluid">
-    <p><span>Searcher.</span> <span class="subtext"><small>Like, just search for it!</small></span></p>
+    <p><span>{{mode}}</span> <span class="subtext" ng-if="mode=='Searcher.'"><small>Like, just search for it!</small></span></p>
   </div>
   <div id="notices" class="container-fluid">
     <div class="flash" ng-if="msg">
       <p>{{msg}}</p>
     </div>
+  </div>
+  <div id="scorebox" ng-if="(mode != 'Searcher.') && (mode != 'Search onn....')">
+    <table>
+      <p>You searched: {{lastSearch}}</p>
+      <tr>
+        <th>SCOREBOARD</th>
+      </tr>
+      <tr ng-if="gameScore.gotTwenty">
+        <td>Got Twenty...</td>
+        <td>{{gameScore.gotTwenty}} pts  </td>
+      </tr>
+      <tr ng-if="gameScore.belowTwenty">
+        <td ng-class="shake">Below Twenty</td>
+        <td>{{gameScore.belowTwenty}} pts  </td>
+      </tr>
+      <tr ng-if="gameScore.instawhacks">
+        <td ng-class="shake">InstaWhack!</td>
+        <td>{{gameScore.instawhacks}} pts  </td>
+      </tr>
+      <tr ng-if="gameScore.maxbreach">
+        <td ng-class="shake">Max Breach!</td>
+        <td>{{gameScore.maxbreach}} pts  </td>
+      </tr>
+      <tr ng-if="gameScore.captionless">
+        <td ng-class="shake">Captionless Result!</td>
+        <td>{{gameScore.captionless}} pts  </td>
+      </tr>
+      <tr>
+        <th>Total:</th>
+        <th>{{gameScore.total}}!</th>
+      </tr>
+    </table>
   </div>
   <div class="results">
     <div ng-repeat="img in images" class="img">
