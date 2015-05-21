@@ -164,8 +164,8 @@ app.controller('appController', function ($scope, $http) {
   };
 
   function updateScoring(count, captionless, gameScore){
-    if (count == 1) gameScore.instawhacks += 500;
-    if (1 < count && count < 20) gameScore.belowTwenty += 100;
+    if (count == 1) gameScore.instawhacks += 5000;
+    if (1 < count && count < 20) gameScore.belowTwenty += 500;
     if (count == 20) gameScore.gotTwenty +=10;
     if (count > 20) gameScore.maxbreach += 10000;
     if (captionless) gameScore.captionless += (1000 * captionless);
