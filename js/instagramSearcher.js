@@ -121,11 +121,6 @@ app.controller('appController', function ($scope, $http) {
   function playGame(){
     // Update search count regardless.
     searchCount += 1;
-    // Limit game to 20 plays for beginners luck, 10 thereafter.
-    if (searchCount >19) {
-      $scope.count = 0; // hack //TODO: Remove hack. 
-      searchCount = 9;
-    }
     // Go no further if it's game over or a repeat search.
     if (gameOver($scope.count) || existingSearch($scope.lastSearch)) return;
     animate();
@@ -136,9 +131,19 @@ app.controller('appController', function ($scope, $http) {
   }
 
   function gameOver(count){
+    // Limit game to 20 plays for beginners luck, 10 thereafter.
+    if (searchCount > 19) {
+      updateScoring($scope.count, $scope.captionless, $scope.gameScore);
+      updateGameMode(true); //show this rounds score
+      zeroGame(); // updates top score
+      setMsg("Ten searches till game over!")
+      searchCount = 10; // 11,12,13...stops on 20.
+      return true;
+    }
     if (count == 0) {
+      // No scoring update necessary here //
       updateGameMode(true);
-      zeroGame();
+      zeroGame(); // updates top score
       // For a friend
       if ($scope.lastSearch == "Capitaineisthegreatest") 
         setMsg('Capitaine IS The Greatest');
@@ -163,7 +168,7 @@ app.controller('appController', function ($scope, $http) {
     if (searchCount > 2) $scope.mode = 'Search onn....'
     if (searchCount > 4) $scope.mode = 'Searchgamer.'
     if (searchCount > 10) $scope.mode = 'Gamer.'
-    if (searchCount > 4 && lost) $scope.mode = 'Loser. Play Again!'
+    if (searchCount > 4 && lost) $scope.mode = $scope.gameScore.total + '! Play Again!';
   };
 
   function updateScoring(count, captionless, gameScore){
