@@ -91,12 +91,6 @@ app.controller('appController', function ($scope, $http) {
       txt.substring(0, 45).replace(/\s+\S*$/, "...");
   };
 
-  function animate(){
-    var count = $scope.count;
-    $scope.shake = ((0 < count && count != 20) || $scope.captionless)
-     ? 'shake': '';
-  }
-
   // Gaming //TODO: move to seperate controller. 
   // Initialisation
   $scope.mode = 'Searcher.'
@@ -119,31 +113,24 @@ app.controller('appController', function ($scope, $http) {
 
   // 'Public Function' relies on: $scope.count, $scope.captionless, $scope.lastSearch from Search scope.
   function playGame(){
-    // Update search count regardless.
     searchCount += 1;
-    // Go no further if it's game over or a repeat search.
-    if (gameOver($scope.count) || existingSearch($scope.lastSearch)) return;
-    animate();
-    // Change front page text over time based on search count.
+    if (gameOver() || existingSearch()) return;
     updateGameMode();
-    // Update scoring based on the search results from this round.
-    updateScoring($scope.count, $scope.captionless, $scope.gameScore);
+    updateScoring();
+    playAnimations();
   }
 
-  function gameOver(count){
+  function gameOver(){
     // Limit game to 20 plays for beginners luck, 10 thereafter.
     if (searchCount > 19) {
-      updateScoring($scope.count, $scope.captionless, $scope.gameScore);
-      updateGameMode(true); //show this rounds score
-      zeroGame(); // updates top score
+      updateScoring();
       setMsg("Ten searches till game over!")
-      searchCount = 10; // 11,12,13...stops on 20.
+      endGame();
       return true;
-    }
-    if (count == 0) {
-      // No scoring update necessary here //
-      updateGameMode(true);
-      zeroGame(); // updates top score
+    };
+    // If no results were returned, you lose.
+    if ($scope.count == 0) {
+      endGame();    
       // For a friend
       if ($scope.lastSearch == "Capitaineisthegreatest") 
         setMsg('Capitaine IS The Greatest');
@@ -153,9 +140,15 @@ app.controller('appController', function ($scope, $http) {
     };
   };
 
-  function existingSearch(last){
-    if (searches.indexOf(last) == -1) {
-       searches.push(last);
+  function endGame(){
+    updateGameMode(true); //show this rounds score
+    zeroGame(); // updates top score
+    searchCount = searchCount > 10 ? 10 : searchCount;
+  }
+
+  function existingSearch(){
+    if (searches.indexOf($scope.lastSearch) == -1) {
+       searches.push($scope.lastSearch);
        return false;
     } else {
       if (searchCount >= 5) setMsg('Not again. Repeat search yo!');
@@ -168,33 +161,55 @@ app.controller('appController', function ($scope, $http) {
     if (searchCount > 2) $scope.mode = 'Search onn....'
     if (searchCount > 4) $scope.mode = 'Searchgamer.'
     if (searchCount > 10) $scope.mode = 'Gamer.'
-    if (searchCount > 4 && lost) $scope.mode = $scope.gameScore.total + '! Play Again!';
+    if (searchCount > 4 && lost) {
+      $scope.gameScore.total = $scope.gameScore.total || 0;
+      $scope.mode = $scope.gameScore.total + '! Play Again!';
+    }
   };
 
-  function updateScoring(count, captionless, gameScore){
-    if (count == 1) gameScore.instawhacks += 5000;
-    if (1 < count && count < 20) gameScore.belowTwenty += 500;
-    if (count == 20) gameScore.gotTwenty +=10;
-    if (count > 20) gameScore.maxbreach += 10000;
-    if (captionless) gameScore.captionless += (1000 * captionless);
-    gameScore.total = getTotalScore(gameScore);
-    $scope.gameScore = gameScore;
+  function updateScoring(){
+    // Count based scoring
+    var count = $scope.count;
+    switch(true) {
+      case (count == 1):
+        $scope.gameScore.instawhacks += 5000;
+        break;
+      case (1 < count && count < 20):
+        $scope.gameScore.belowTwenty += 500;
+        break;
+      case (count == 20):
+        $scope.gameScore.gotTwenty +=10;
+        break;
+      case ($scope.count > 20):
+        $scope.gameScore.maxbreach += 10000;
+        break;
+    }
+    // Captionless based scoring
+    if ($scope.captionless) $scope.gameScore.captionless += (5000 * captionless);
+    // Total
+    setTotalScore();
   };
 
-  function getTotalScore(gameScore){
-    delete gameScore.total;
+  function setTotalScore(){
+    delete $scope.gameScore.total;
     var total = 0;
-    for (var property in gameScore) {
-      if (gameScore.hasOwnProperty(property)) {
-        total += gameScore[property];
+    for (var property in $scope.gameScore) {
+      if ($scope.gameScore.hasOwnProperty(property)) {
+        total += $scope.gameScore[property];
       }
     }
-    return total;
+    $scope.gameScore.total = total;
   };
 
   function updateTopScore(){
     if ($scope.gameScore && ($scope.topScore < $scope.gameScore.total)) {
       $scope.topScore = $scope.gameScore.total;
     };
+  };
+
+  function playAnimations(){
+    var count = $scope.count;
+    $scope.shake = ((0 < count && count != 20) || $scope.captionless)
+     ? 'shake': '';
   };
 });
